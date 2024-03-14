@@ -2,143 +2,153 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
 namespace SecurityLibrary
 {
     public class RailFence : ICryptographicTechnique<string, int>
     {
-
         public int Analyse(string plainText, string cipherText)
         {
-            if (!string.IsNullOrEmpty(plainText) && !string.IsNullOrEmpty(cipherText))
+
+            cipherText = cipherText.ToLower();
+            for (int i = 1; i < plainText.Length; i++)
             {
-                Console.WriteLine("Both plaintext and ciphertext are not empty or null.");
-            }
-
-            int Length = plainText.Length;
-            int MAXIMUMKEY = Length / 2;
-
-            for (int key = 2; key <= MAXIMUMKEY; key++)
-            {
-                string DECRYPTEDTEXT = Decrypt(cipherText, key);
-                Console.WriteLine($"Key: {key}, Decrypted Text: {DECRYPTEDTEXT}");
-
-                if (key % 2 == 0 && DECRYPTEDTEXT.Length % 2 == 0)
+                if (Encrypt(plainText, i).ToLower().CompareTo(cipherText) == 0)
                 {
-                    Console.WriteLine("Even key length and even decrypted text length.");
-                }
-
-                if (string.Equals(DECRYPTEDTEXT, plainText, StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Key found: " + key);
-                    return key;
+                    return i;
                 }
             }
-            return -1; // Key not found
-                       // throw new NotImplementedException();
+            return -1;
         }
-
-            public string Decrypt(string cipherText, int key)
+        public string Decrypt(string cipherText, int key)
         {
-
-
-            int LENGTH_OF_CIPHERTEXT = cipherText.Length;
-            //array 3shan elrail matrix
-            char[,] RAILMATRIX = new char[key, LENGTH_OF_CIPHERTEXT];
-
-            int row = 0;
-            bool down = false;
-            // bamla elmatrix elli fiha spaces b chracters mn elciphertext 
-            for (int i = 0; i < LENGTH_OF_CIPHERTEXT; i++)
+            string cipher = "";
+            double s = (double)cipherText.Length / key;
+            bool w = unchecked(s == (int)s);
+            double q = 0;
+            if (w)
             {
-                if (i == LENGTH_OF_CIPHERTEXT - 1 && key % 2 == 0)
-                {
-
-                    down = !down;
-                }
-
-                RAILMATRIX[row, i] = ' '; //  rail matrix fiha space characters
-
-                if (row == 0 || row == key - 1)
-                    down = !down;
-                // banzl llnext row 
-                row += down ? 1 : -1;
+                q = s;
             }
-
-            int index = 0;
+            else
+            {
+                q = s + 1;
+            }
+            int f = (int)q;
+            char[,] matrix = new char[key, f];
+            int count = 0;
             for (int i = 0; i < key; i++)
             {
-                for (int j = 0; j < LENGTH_OF_CIPHERTEXT; j++)
+                for (int j = 0; j < f; j++)
                 {
-                    if (RAILMATRIX[i, j] == ' ' && index < LENGTH_OF_CIPHERTEXT)
+                    if (count < cipherText.Length)
                     {
-                        RAILMATRIX[i, j] = cipherText[index++];
+                        matrix[i, j] = cipherText[count];
+                        count++;
                     }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            int a = 0;
+            for (int i = 0; i < f; i++)
+            {
+                for (int j = 0; j < key; j++)
+                {
+
+                    cipher += matrix[j, i];
+                    a++;
 
                 }
             }
+            return cipher;
 
-            row = 0;
-            down = false;
-            string plaintext = "";
-            for (int i = 0; i < LENGTH_OF_CIPHERTEXT; i++)
-            {
-                // ba7ot characters mn elrail matrix llplaintext
-                plaintext += RAILMATRIX[row, i];
+            //int textLength = cipherText.Length;
+            //int[] fence = new int[textLength]; // Array to hold the fence indices
+            //int i = 0;
 
-                if (row == 0 || row == key - 1)
-                    down = !down;
+            //// Build the fence indices
+            //for (int j = 0; j < textLength; j++)
+            //{
+            //    fence[j] = i;
 
-                row += down ? 1 : -1;
+            //    // Change direction when reaching the top or bottom rail
+            //    if (i == 0)
+            //    {
+            //        i = 1;
+            //    }
+            //    else if (i == key - 1)
+            //    {
+            //        i = key - 2;
+            //    }
+            //    else
+            //    {
+            //        i += (j % 2 == 0) ? -2 : 2; // Alternate between going up and down
+            //    }
+            //}
 
+            //// Reorder the cipher text based on the fence indices
+            //char[] plainChars = new char[textLength];
+            //for (int j = 0; j < textLength; j++)
+            //{
+            //    plainChars[fence[j]] = cipherText[j];
+            //}
 
-                // throw new NotImplementedException();
-            }
-            if (plaintext.Length % 5 == 0)
-            {
-                row = 0;
-            }
-            return plaintext;
+            //return new string(plainChars).ToLower();
+
         }
+
         public string Encrypt(string plainText, int key)
         {
-            int textLength = plainText.Length;
-            //list 3shan a3ml represent ll rail matrix
-            List<StringBuilder> RAILMATRIX = new List<StringBuilder>();
+
+            string plan_text = plainText;
+            string cipher = "";
+
+            double s = plan_text.Length / key;
+            double q = 0;
+            bool w = unchecked(s == (int)s);
+            // string p = "";
+            if (!w)
+            {
+                q = s;
+            }
+            else
+            {
+                q = s + 1;
+            }
+            Console.WriteLine(s);
+            char[,] matrix = new char[key, ((int)q)];
+            int count = 0;
+            for (int i = 0; i < q; i++)
+            {
+                for (int j = 0; j < key; j++)
+                {
+                    if (count < plan_text.Length)
+                    {
+                        matrix[j, i] = plan_text[count];
+                        count++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            int a = 0;
             for (int i = 0; i < key; i++)
             {
-                RAILMATRIX.Add(new StringBuilder());
+                for (int j = 0; j < q; j++)
+                {
+
+                    cipher += matrix[i, j];
+                    a++;
+
+                }
             }
-            //variables 3shan ashof elcurrent row w eltraverse
-            int row = 0;
-            bool traverse = false;
-            //balf 3la kol character
-            foreach (char c in plainText)
-            {
-                // ba7ot elcurrent char fel plaintext fel rail matrix fel current row
-                RAILMATRIX[row].Append(c);
-
-                // bashof lw wslt lltop aw elbottom bta3 elrail aw bdlt eldirection y3ni ro7t fi str tany
-                if (row == 0 || row == key - 1)
-                    traverse = !traverse;
-
-                // bat7rk l row gdid 7sb ekcurrent direction 
-                row += traverse ? 1 : -1;
-            }
-            //  store the ciphertext
-            StringBuilder ciphertext = new StringBuilder();
-
-
-            foreach (StringBuilder rowString in RAILMATRIX)
-            {
-                // ba7ot characters fel current row fel ciphertext
-                ciphertext.Append(rowString);
-            }
-            return ciphertext.ToString();
-
-            // throw new NotImplementedException();
+            return cipher;
         }
-
     }
 }
