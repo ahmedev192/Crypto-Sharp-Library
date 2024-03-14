@@ -56,23 +56,60 @@ namespace SecurityLibrary
 
         public string Decrypt(string cipherText, string key)
         {
-            throw new NotImplementedException();
+            cipherText = cipherText.ToLower();
+            key = key.ToLower();
+            string plaintxt = "";
+            int keyIdx = 0;
+
+            for (int i = 0; i < cipherText.Length; i++)
+            {
+                if (char.IsLetter(cipherText[i]))
+                {
+                    int numericalciphertxt = cipherText[i] - 'a';
+                    int numericalkey = key[keyIdx % key.Length] - 'a';
+                    int decryptedvalue = (numericalciphertxt - numericalkey + 26) % 26;
+                    char decryptedtxt = (char)(decryptedvalue + 'a');
+                    plaintxt += decryptedtxt;
+
+                    keyIdx++;
+                }
+                else
+                {
+                    plaintxt += cipherText[i];
+                }
+            }
+
+            return plaintxt;
         }
+
 
         public string Encrypt(string plainText, string key)
         {
-            string alphabet = "abcdefghijklmnopqrstuvwxyz";
-            string encryptedText = "";
+            plainText = plainText.ToLower();
+            key = key.ToLower();
+            string ciphertxt = "";
+            int keyIdx = 0;
 
             for (int i = 0; i < plainText.Length; i++)
             {
-                int plainCharIndex = alphabet.IndexOf(plainText[i]);
-                int keyCharIndex = alphabet.IndexOf(key[i % key.Length]);
-                int encryptedCharIndex = (plainCharIndex + keyCharIndex) % 26;
-                encryptedText += alphabet[encryptedCharIndex];
+                if (char.IsLetter(plainText[i]))
+                {
+                    int numericaltxt = plainText[i] - 'a';
+                    int numericalkey = key[keyIdx % key.Length] - 'a';
+                    int encryptedValue = (numericaltxt + numericalkey) % 26;
+                    char encryptedtxt = (char)(encryptedValue + 'a');
+                    ciphertxt += encryptedtxt;
+
+                    keyIdx++;
+                }
+                else
+                {
+                    ciphertxt += plainText[i];
+                }
             }
 
-            return encryptedText;
+            return ciphertxt;
         }
+
     }
 }
